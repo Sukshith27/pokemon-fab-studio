@@ -1,56 +1,69 @@
 import React from 'react';
-import { View, Text, TouchableOpacity} from 'react-native';
-import { createStore } from 'redux';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { variableDeclaration } from '@babel/types';
+import PokemonDetails from './pokemonDetails';
 
 export default class PokemonList extends React.Component {
     constructor() {
         super();
         this.state = {
-            pokemonItems : []
-        }
+            isLoading: true,
+            dataSource: [],
+            itemPressed: false,
+            itemUrl: ''
+        };
     }
 
-    reducer = function(state, action) {
-        if(action.type === "GETITEMS") {
-            return action.payload;
-        }
-        return state;
+    componentDidMount() {
+        fetch('https://pokeapi.co/api/v2/pokemon')
+            .then(response => response.json())
+            .then(responseJson => {
+                console.log(responseJson);
+                this.setState({
+                    isLoading: false,
+                    dataSource: responseJson.results
+                })
+            })
+            .catch(error => alert('Unable to fetch data'))
     }
 
-    store = createStore(reducer, "Value from store");
-
-    componentWillMount() {
-        store.dispatch({type: 'GETITEMS', payload: this.getPokeItems()});
-
-        store.subscribe(() => {
-            console.log("Store is:", store.getState());
-        })
+    pokemonDetails(url) {
+        console.log(url);
+        this.setState({ itemClicked: true, itemUrl: url });
     }
 
-    getPokeItems = () => {
-        var itemsFromAPI;
-        console.log('API');
-
-        fetch('https://pokeapi.co/api/v2/pokemon/')
-        .then(response => response.json())
-        .then(responseJson => responseJson)
+    backPressed = () => {
+        this.setState({ itemClicked: false });
     }
+
+    _renderItem = ({ item, index }) => (<View style={styles.container}>
+        <TouchableOpacity onPress={() => this.pokemonDetails(item.url)}>
+            <Text style={styles.details}>{item.name}</Text>
+        </TouchableOpacity>
+    </View>);
 
     render() {
-        //store.dispatch({type: 'DEFEND', payload: 'return from dispatch -- 2'})
-        // pokemonDetails = () => {
-        //     store.dispatch({type: "true", details: fetch('https://pokeapi.co/api/v2/version/1')})
-        // }
-        
-      
-      return (
-            <View>
-                <TouchableOpacity 
-                    onPress = {() => this.pokemonDetails()}
-                />
-                <Text>Pokemon Items</Text>
-            </View>
+        let { itemClicked, itemUrl } = this.state;
+
+        if (itemClicked) {
+            return <PokemonDetails itemUrl={itemUrl} func={this.backPressed} />
+        }
+
+        return (
+            <FlatList
+                data={this.state.dataSource}
+                renderItem={this._renderItem}
+            />
         );
     }
-  }
-  
+}
+
+const styles = StyleSheet.create({
+    container: {
+        margin: 20,
+    },
+    details: {
+        margin: 10,
+        fontWeight: "900"
+    }
+});
