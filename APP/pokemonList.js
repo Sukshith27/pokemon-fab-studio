@@ -10,33 +10,33 @@ export default class PokemonList extends React.Component {
         }
     }
 
-    render() {
-        const reducer = function(state, action) {
-            if(action.type === "GETITEMS") {
-                return action.payload;
-            }
-            if(action.type === "DEFEND") {
-                return action.payload;
-            }
-            return state;
+    reducer = function(state, action) {
+        if(action.type === "GETITEMS") {
+            return action.payload;
         }
+        return state;
+    }
 
-        const store = createStore(reducer, "Value from store");
+    store = createStore(reducer, "Value from store");
+
+    componentWillMount() {
+        store.dispatch({type: 'GETITEMS', payload: this.getPokeItems()});
 
         store.subscribe(() => {
             console.log("Store is:", store.getState());
         })
+    }
 
-        store.dispatch({type: 'GETITEMS', payload: this.getPokeItems})
+    getPokeItems = () => {
+        var itemsFromAPI;
+        console.log('API');
 
-        getPokeItems = () => {
-            var itemsFromAPI;
-            console.log('API');
+        fetch('https://pokeapi.co/api/v2/pokemon/')
+        .then(response => response.json())
+        .then(responseJson => responseJson)
+    }
 
-            fetch('https://pokeapi.co/api/v2/pokemon/')
-            .then(response => response.json())
-            .then(responseJson => responseJson)
-        }
+    render() {
         //store.dispatch({type: 'DEFEND', payload: 'return from dispatch -- 2'})
         // pokemonDetails = () => {
         //     store.dispatch({type: "true", details: fetch('https://pokeapi.co/api/v2/version/1')})
@@ -48,7 +48,7 @@ export default class PokemonList extends React.Component {
                 <TouchableOpacity 
                     onPress = {() => this.pokemonDetails()}
                 />
-                <Text>Home Screen</Text>
+                <Text>Pokemon Items</Text>
             </View>
         );
     }
