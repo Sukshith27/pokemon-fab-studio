@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, BackHandler, ActivityIndicator, StyleSheet } from 'react-native';
 
 export default class PokemonDetails extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             itemDetails: [],
-            isLoading: true
+            isLoading: true,
+            itemUrl: this.props.navigation.getParam('itemUrl', 'NA')
         }
     }
 
@@ -19,7 +20,7 @@ export default class PokemonDetails extends React.Component {
     }
 
     componentWillMount() {
-        fetch(this.props.itemUrl)
+        fetch(this.state.itemUrl)
             .then(response => response.json())
             .then(responseJson => this.setState({ 
                 itemDetails: responseJson, 
@@ -29,7 +30,7 @@ export default class PokemonDetails extends React.Component {
     }
 
     handleBackPress = () => {
-        this.props.func();
+        this.props.navigation.navigate('Home');
         return true;
     }
 

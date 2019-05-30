@@ -30,6 +30,7 @@ export default class PokemonList extends React.Component {
     pokemonDetails(url) {
         console.log(url);
         this.setState({ itemClicked: true, itemUrl: url });
+        this.props.navigation.navigate('Details', {itemUrl: url});
     }
 
     backPressed = () => {
@@ -45,9 +46,9 @@ export default class PokemonList extends React.Component {
     render() {
         let { itemClicked, itemUrl } = this.state;
 
-        if (itemClicked) {
-            return <PokemonDetails itemUrl={itemUrl} func={this.backPressed} />
-        }
+        // if (itemClicked) {
+        //     return <PokemonDetails itemUrl={itemUrl} func={this.backPressed} />
+        // }
 
         return (
             <FlatList

@@ -1,10 +1,10 @@
 import React from 'react';
-import PokemonList from './APP/pokemonList';
+import AppNavigator from './APP/appNavigator';
 
 export default class App extends React.Component{
   render() {
     return (
-      <PokemonList/>
+      <AppNavigator/>
     );
   }
 }
